@@ -1,6 +1,6 @@
 
 
-```markdown
+
 # Drone Reinforcement Learning Project
 
 This project implements reinforcement learning (RL) to train a simulated drone to hover at a target position using [gym-pybullet-drones](https://github.com/utiasDSL/gym-pybullet-drones) and [Stable-Baselines3](https://stable-baselines3.readthedocs.io/). The model is trained using the PPO (Proximal Policy Optimization) algorithm with TensorBoard for logging and evaluation.
