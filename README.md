@@ -1,103 +1,99 @@
+# Drone Reinforcement Learning with PyBullet and Stable-Baselines3
 
+This project implements a reinforcement learning environment for controlling a simulated drone in 3D space. Using the `gym-pybullet-drones` library and the `Stable-Baselines3` library, the project focuses on training a drone to hover using the Proximal Policy Optimization (PPO) algorithm.
 
+## Repository Structure
 
-# Drone Reinforcement Learning Project
-
-This project implements reinforcement learning (RL) to train a simulated drone to hover at a target position using [gym-pybullet-drones](https://github.com/utiasDSL/gym-pybullet-drones) and [Stable-Baselines3](https://stable-baselines3.readthedocs.io/). The model is trained using the PPO (Proximal Policy Optimization) algorithm with TensorBoard for logging and evaluation.
-
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Installation](#installation)
-- [Project Structure](#project-structure)
-- [Training the Model](#training-the-model)
-- [Evaluating the Model](#evaluating-the-model)
-- [Results and Visualization](#results-and-visualization)
-- [Future Improvements](#future-improvements)
-
-## Project Overview
-The main goal of this project is to train a drone to hover at a target location in a simulated environment using reinforcement learning. The environment includes obstacles, and the model is trained to maintain a stable hover position while avoiding any obstacles.
-
-Key elements:
-- **Environment:** HoverAviary, a custom gym environment for drone control.
-- **Agent:** PPO agent from Stable-Baselines3.
-- **Logging:** Training progress and evaluation metrics are logged using TensorBoard.
-
-## Installation
-
-### Prerequisites
-Ensure you have Python 3.8+ installed. The project dependencies include:
-- `gymnasium`
-- `pybullet`
-- `stable-baselines3`
-- `tensorboard`
-
-### Steps
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/ranga04/drone_rl.git
-   cd drone_rl
-   ```
-
-2. Create a virtual environment (recommended):
-   ```bash
-   python3 -m venv drone_rl_env
-   source drone_rl_env/bin/activate  # On Windows, use drone_rl_env\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Project Structure
-```plaintext
-drone_rl/
-├── rl_scripts/
-│   ├── test_drone_env.py       # Script to train and test the drone environment
-│   ├── run_saved_model.py      # Script to evaluate the saved model
-│   ├── logs/                   # Contains TensorBoard logs and checkpoints
-│   └── README.md               # This README file
-├── gym-pybullet-drones/        # The drone simulation environment
+```
+drone_rl
+├── gym-pybullet-drones         # Custom environment files for drone simulation
+├── rl_scripts                  # Reinforcement learning scripts and logs
+│   ├── logs                    # Training logs for TensorBoard visualization
+│   └── test_drone_env.py       # Main script for training and evaluation
+├── LICENSE                     # License file
+├── README.md                   # Project documentation
 └── requirements.txt            # Python dependencies
 ```
 
-## Training the Model
+## Requirements
 
-To train the PPO agent:
-1. Open the `test_drone_env.py` script and adjust `total_timesteps` if needed.
-2. Run the script:
+To get started, install the dependencies listed in `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Training the Drone
+
+1. **Setup**: Make sure you have all dependencies installed and `gym-pybullet-drones` configured.
+2. **Run Training**: To start training the drone with PPO, run the main training script:
+
    ```bash
-   python3 rl_scripts/test_drone_env.py
+   python rl_scripts/test_drone_env.py
    ```
 
-This will save checkpoints and logs in the `logs/` directory, including TensorBoard logs.
+3. **Logging**: During training, logs are saved in `rl_scripts/logs`, allowing you to monitor progress with TensorBoard.
 
-## Evaluating the Model
+## Monitoring Training with TensorBoard
 
-After training, you can evaluate the saved model by running:
-```bash
-python3 rl_scripts/run_saved_model.py
+1. **Start TensorBoard**:
+
+   ```bash
+   tensorboard --logdir=rl_scripts/logs
+   ```
+
+2. **Access TensorBoard**: Open [http://localhost:6006](http://localhost:6006) in your browser to visualize training metrics such as reward, policy loss, and value loss.
+
+## Using a Pretrained Model
+
+The repository includes code to load and evaluate a trained model. After training completes, the final model is saved in `rl_scripts/logs` as `final_ppo_drone_model.zip`.
+
+To evaluate a saved model, modify the `test_drone_env.py` script to load `final_ppo_drone_model.zip` and visualize the drone's performance:
+
+```python
+from stable_baselines3 import PPO
+
+# Load the model
+model = PPO.load("rl_scripts/logs/final_ppo_drone_model")
+
+# Run the environment and see how the trained model performs
+obs = env.reset()
+for i in range(1000):
+    action, _ = model.predict(obs)
+    obs, reward, done, info = env.step(action)
+    env.render()
+    if done:
+        obs = env.reset()
+
+env.close()
 ```
 
-The evaluation script loads the saved model and lets the agent interact with the environment to demonstrate the learned behavior.
+## Repository Contents
 
-## Results and Visualization
+### `gym-pybullet-drones`
 
-To visualize the training progress using TensorBoard:
-```bash
-tensorboard --logdir=./rl_scripts/logs
-```
+Contains the customized environment and configurations for the drone simulation using PyBullet.
 
-Open [http://localhost:6006/](http://localhost:6006/) in your browser to see metrics like:
-- **Value Loss**
-- **Policy Gradient Loss**
-- **Entropy Loss**
-- **Average Episode Reward**
+### `rl_scripts/test_drone_env.py`
 
-## Future Improvements
-- **Complexity**: Add dynamic obstacles or weather conditions to make the environment more challenging.
-- **Hyperparameter Tuning**: Experiment with different PPO parameters.
-- **Different RL Algorithms**: Test alternative algorithms like SAC or DDPG for continuous action space control.
+The main script for training the drone with PPO. This script includes model training, evaluation, and logging.
 
-## Acknowledgments
-This project uses [gym-pybullet-drones](https://github.com/utiasDSL/gym-pybullet-drones) by the University of Toronto Institute for Aerospace Studies and [Stable-Baselines3](https://stable-baselines3.readthedocs.io/).
+### `rl_scripts/logs`
+
+Contains training logs for monitoring with TensorBoard and saved model checkpoints. **Note**: This folder will initially be empty.
+
+## Requirements
+
+### `requirements.txt`
+
+Contains the following dependencies:
+- `gymnasium`
+- `stable-baselines3`
+- `tensorboard`
+- `pybullet`
+- `gym-pybullet-drones`
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
